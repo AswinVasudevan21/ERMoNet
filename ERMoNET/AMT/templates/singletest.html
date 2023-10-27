@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Binary-single</title>
+</head>
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet"/>
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 10;
+    font-family: Arial;
+}
+
+.paddedbody{
+   padding: 150px;
+}
+
+.header {
+    text-align: center;
+    padding: 2px;
+}
+
+
+.zoom {
+    transition: transform .2s;
+}
+
+.zoom:hover {
+    -ms-transform: scale(2.5); /* IE 9 */
+    -webkit-transform: scale(2.5); /* Safari 3-8 */
+    transform: scale(2.5);
+    height: auto;
+    width: auto;
+    transition-delay: 2s;
+
+}
+
+
+
+
+.box {
+    width: 300px;
+    height: 350px;
+    background:#DCDCDC;
+    vertical-align: top;
+    display: inline-block;
+    *display: inline;
+    margin: 10px;
+    zoom: 0
+
+}
+.stretch {
+    width: 100%;
+    display: inline-block;
+    font-size: 0;
+    line-height: 0
+}
+
+</style>
+
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<body>
+
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Annsen</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li><a href="https://www.sensory.com">Sensory</a></li>
+      <li><a href="mailto:avasudevan@sensoryinc.com">Report</a></li>
+    </ul>
+
+     <ul class="nav navbar-nav navbar-right">
+      <li><a href="https://www.sensory.com/support/contact/">Contact</a></li>
+    </ul>
+
+    </ul>
+  </div>
+</nav>
+
+<div class="jumbotron text-center" >
+  <h1> {{title}} </h1>
+    <div class="header">
+      <h3> <p> {{instruction}} </p></h3>
+    </div>
+<div align="center">
+ <div class="container">
+  <div class="row" align="center">
+    <div class="col-sm-5">
+      <div align="left">
+        <h3><b> Selection:</b></h3>
+        <h4>Click [Single] : To select / unselect an item
+            <br> Hover [Long] : To zoom an item   </h4>
+      </div>
+  </div>
+    <div class="col-sm-4">
+     <div align="left">
+      <h3><b>Time:</b></h3>
+            <h4><div id="demo"></div>
+            Pages left = {{remaining}}</h4>
+     </div>
+    </div>
+    <div class="col-sm-3">
+      <div align="left">
+        <h3><b>Keyboard shortcuts:</b></h3>
+            <h4> space:  To next page
+            <br> b:  To prev page
+            <br> a:  Select all images
+            <br> l:  Select all left click
+            <br> r:  Select all right click
+            <br> c:  Clear all clicks </h4>
+      </div>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+
+
+<div class="paddedbody">
+
+<div align="center" id="imageset">
+    {% for i in range(0, totallength) %}
+
+        <div class="box">
+            <img id={{imgid[i][0]}} class="zoom" src="{{questionset[i]}}" style='height: 100%; width: 100%; object-fit: contain'/>
+        </div>
+
+    {% endfor %}
+</div>
+
+    <br>
+    <br>
+
+    <div align="right">
+        <button type="submit"  onclick="goBack()" class="btn btn-primary btn-lg">Prev</button>
+        <button type="submit" formmethod="get" onclick="nextPage()" class="btn btn-success btn-lg">Next</button>
+    </div>
+
+</div>
+
+<script>
+var marked = [];
+var j;
+var index;
+var cutindex;
+
+window.onload = function(){
+   {% for j in range(0, marklen) %}
+        marked[{{j}}] ='{{mark[j][0]}}'
+        document.getElementById(marked[{{j}}]).style.background = "green";
+    {% endfor %}
+};
+
+$('.zoom').click(function() {
+     if( marked.includes(this.id) )
+     {
+        index = marked.indexOf(this.id);
+        marked.splice(index,1)
+        document.getElementById(this.id).style.background = "#DCDCDC";
+     }
+     else
+     {
+     marked.push(this.id);
+     document.getElementById(this.id).style.background = "green";
+     }
+});
+
+
+
+function goBack() {
+var nextpage = {{page}} - 1;
+    location.href = "https://annsen.herokuapp.com/single/{{taskid}}/{{email}}/redirect/" + nextpage;
+}
+
+function nextPage() {
+
+    $.ajax({
+          type: "POST",
+          contentType: "application/json;charset=utf-8",
+          url: "/single/{{taskid}}/{{email}}/postajaxdirect/{{page}}",
+          traditional: "true",
+          data: JSON.stringify({marked}),
+          dataType: "json"
+          });
+
+    var nextpage = {{page}} + 1;
+    location.href = "https://annsen.herokuapp.com/single/{{taskid}}/{{email}}/redirect/" + nextpage;
+}
+
+document.addEventListener('keydown', function(event) {
+    if(event.keyCode == 32) {
+        nextPage()
+    }
+    else if(event.keyCode == 65) {
+        var x = document.getElementById("imageset").querySelectorAll(".zoom")
+        for (a=0; a<x.length; a++)
+        {
+          if(!marked.includes(x[a].id))
+          {
+            marked.push(x[a].id);
+            x[a].style.backgroundColor = "green";
+          }
+        }
+    }
+
+    else if(event.keyCode == 66) {
+        goBack()
+    }
+    else if(event.keyCode == 67) {
+        var x = document.getElementById("imageset").querySelectorAll(".zoom")
+        for (a=0; a<x.length; a++)
+        {
+          cutindex = marked.indexOf(x[a].id);
+          marked.splice(cutindex,1)
+          x[a].style.backgroundColor = "#DCDCDC";
+        }
+    }
+
+});
+
+// Set the date we're counting down to
+var countDownDate = new Date("{{maxduration}}").getTime();
+
+
+// Update the count down every 1 second
+var x = setInterval(function() {
+
+    // Get todays date and time
+    var now = new Date().getTime();
+    var timezone = new Date().getTimezoneOffset()/ -60;
+
+
+    // Find the distance between now an the count down date
+    var distance = (countDownDate) - now;
+
+    // Time calculations for days, hours, minutes and seconds
+    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)) + timezone;
+    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    // Output the result in an element with id="demo"
+    document.getElementById("demo").innerHTML = days + "d " +  hours + "h "
+    + minutes + "m " + seconds + "s ";
+
+    // If the count down is over, write some text
+    if (distance < 0) {
+        clearInterval(x);
+        document.getElementById("demo").innerHTML = "EXPIRED";
+    }
+}, 1000);
+
+
+
+</script>
+</body>
+</html>

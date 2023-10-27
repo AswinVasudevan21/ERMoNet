@@ -1,0 +1,44 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+
+
+<div class="jumbotron text-left">
+<form class="form-horizontal" action='' method="POST">
+  <fieldset>
+    <div id="legend">
+      <legend class=""> <h2>Ensure to click Submit</h2></legend>
+    </div>
+
+    <div class="control-group">
+      <!-- Username -->
+      <label class="control-label"  >Task Assigned by: {{raiser}} </label>
+    </div>
+     <div class="control-group">
+      <!-- Username -->
+      <label class="control-label"  >Task Completed by: {{email}}</label>
+    </div>
+     <div class="control-group">
+      <!-- Username -->
+      <label class="control-label"  >List of Task completed: {{tasks}} </label>
+    </div>
+
+    <!--<div class="control-group">-->
+      <!--&lt;!&ndash; Button &ndash;&gt;-->
+      <!--<div class="controls">-->
+        <!--<a href="/single" class="btn btn-success">View All</a>-->
+      <!--</div>-->
+    <!--</div>-->
+
+    <div class="control-group">
+    <!-- Button -->
+    <div class="controls">
+      <a href="/logout/{{taskid}}/{{email}}/{{userid}}" class="btn btn-success">Submit</a>
+    </div>
+    </div>
+  </fieldset>
+</form>
+</div>
+
+
+{% endblock %}

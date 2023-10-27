@@ -1,0 +1,13 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+  <div class="jumbotron text-center">
+    <h3> ANN-SEN ANNOTATION TASK</h3>
+    <p class="lead">The following page has a series of annotation task to be performed by users affiliated to Sensory, Inc.</p>
+    <p> Task Type: {{tasktype}} </p>
+    <p> Number of Tasks: {{count}} </p>
+    <p> Time Required: {{time}}</p>
+
+      <a href="https://annsen.herokuapp.com/register/{{url}}" class="btn btn-success btn-lg">Register</a>
+  </div>
+{% endblock %}
